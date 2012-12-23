@@ -1,0 +1,17 @@
+extends layout
+
+block head
+    script(data-main='paper_battle', type='text/javascript', src='libs/require-2.1.0.js')
+
+block body
+    #header
+        span.author By Oliver Perez
+
+        span.tittle Paper Battle
+
+        span.ping Ping: 
+            span.value 0
+            | ms
+
+    #screen.select-dissabled
+        span.name
