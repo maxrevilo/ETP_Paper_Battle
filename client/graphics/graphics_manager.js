@@ -27,7 +27,6 @@ var GraphicsManager = Class.extend({
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
-        console.log(container.innerWidth(), container.innerHeight());
 
 
 
@@ -61,8 +60,8 @@ var GraphicsManager = Class.extend({
     draw: function(delta_time) {
         var player  = this.user.player,
             ang     = player.control.ang,
-            camBase = new THREE.Vector3(Math.sin(ang), 2, Math.cos(ang)),
-            camLookOffset = new THREE.Vector3(0, 1, 0);
+            camBase = new THREE.Vector3(-Math.sin(ang), 2, -Math.cos(ang)),
+            camLookOffset = new THREE.Vector3(0, 1.8, 0);
 
         var player_vec3 = new THREE.Vector3(player.x, 0, player.y);
 

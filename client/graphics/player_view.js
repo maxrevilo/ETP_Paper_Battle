@@ -7,22 +7,30 @@ function(Class, THREE) {
         shininess: 8
     });
 
-    var PLAYER_GEOM = new THREE.CubeGeometry(1, 1, 1);
-
     var PlayerView = Class.extend({
-        //STATIC:
-        PLAYER_GEOM: PLAYER_GEOM,
-        PLAYER_MATERIAL: PLAYER_MATERIAL,
-
-        //Object to draw:
         component: null,
         mesh: null,
 
         init: function(component) {
             this.component = component;
 
+            var self = this;
             //TODO Encapsulate to allow override:
-            this.mesh = new THREE.Mesh(PLAYER_GEOM, PLAYER_MATERIAL);
+            PB.loader.loadGeom('assets/models/Male02_bin.js',
+                function(geom) {
+                    if(self.mesh) {
+                        //TODO work on a mesh.setGeometry
+                        //self.mesh.geometry = geom;
+                        PB.graphics.scene.remove(self.mesh);
+                        self.mesh = new THREE.Mesh(geom, PLAYER_MATERIAL);
+                        self.mesh.scale = new THREE.Vector3(0.01,0.01,0.01);
+                        PB.graphics.scene.add(self.mesh);
+                    } else {
+                        self.mesh = new THREE.Mesh(geom, PLAYER_MATERIAL);
+                    }
+                }
+            );
+            
         },
 
         draw: function(delta_time) {

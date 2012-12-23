@@ -2,10 +2,10 @@ define(['underscore', 'utils', 'class', 'input_manager'],
 function(_, Utils, Class, InputManager) {
 
     var KEY_TO_VEC = {
-        68: {x:+1, y: 0},
-        65: {x:-1, y: 0},
-        83: {x: 0, y:+1},
-        87: {x: 0, y:-1}
+        68: {x:-1, y: 0},
+        65: {x:+1, y: 0},
+        83: {x: 0, y:-1},
+        87: {x: 0, y:+1}
     };
 
     var User = Class.extend({

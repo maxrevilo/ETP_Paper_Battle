@@ -28,19 +28,22 @@ requirejs.config({
 
 require(
 ['require', 'jquery', 'sockets', 'three', 'input_manager',
-    'paper_battle/paper_battle', 'graphics/graphics_manager', 'user'],
-function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User) {
+    'paper_battle/paper_battle', 'graphics/graphics_manager', 'user', 'graphics/loader_manager'],
+function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User, LoaderManager) {
 
     PB = {
         socket: null,
         game: null,
         graphics: null,
-        user: null
+        user: null,
+        loader: null
     };
 
     PB.socket = io.connect('/game');
 
     InputManager.init(window);
+
+    PB.loader = new LoaderManager();
 
     PB.game = new PaperBattle(60);
 
