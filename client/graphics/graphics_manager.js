@@ -28,7 +28,9 @@ var GraphicsManager = Class.extend({
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
 
-
+        //Ambient
+        var ambient = new THREE.AmbientLight( 0x101030 );
+        this.scene.add( ambient );
 
         //Point Lights:
         var pointLight = new THREE.PointLight(0xFFFFFF);

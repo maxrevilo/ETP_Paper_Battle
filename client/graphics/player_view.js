@@ -1,18 +1,5 @@
-define(['class', 'three'],
+define(['class', 'three', 'MTLLoader', 'OBJMTLLoader'],
 function(Class, THREE) {
-
-    /*var PLAYER_MATERIAL = new THREE.MeshPhongMaterial({
-        color: 0xCC0000,
-        specular: 0xFFFFFF,
-        shininess: 8
-    });*/
-
-    var PLAYER_MATERIAL = new THREE.MeshNormalMaterial();
-    var PLAYER_MATERIAL2 = new THREE.MeshPhongMaterial({
-        color: 0xCC0000,
-        specular: 0xFFFFFF,
-        shininess: 8
-    });
 
     var PlayerView = Class.extend({
         component: null,
@@ -25,21 +12,21 @@ function(Class, THREE) {
             var self = this;
 
             this.root = new THREE.Object3D();
-            //TODO Encapsulate to allow override:
-            PB.loader.loadGeom('assets/models/Male02_bin.js',
-                function(geom) {
-                    //If is not the first geom update:
-                    if(self.root.children.length !== 0) {
-                        self.root.remove(self.root.children[0]);
-                    }
+            this.loadContent();
+        },
 
-                    //Adding a mesh with the new geom:
-                    var mesh = new THREE.Mesh(geom, PLAYER_MATERIAL);
-                    self.root.add(mesh);
-                    self.fit_to_scale({x: 1, y: null, z: 1}, mesh);
-                }
-            );
-            
+        loadContent: function() {
+            var loader = new THREE.OBJMTLLoader(),
+                self = this;
+            loader.addEventListener( 'load', function ( event ) {
+                var model = event.content;
+                self.root.add(model);
+                var scale = 0.01;
+                model.scale.x = scale;
+                model.scale.y = scale;
+                model.scale.z = scale;
+            });
+            loader.load( 'assets/models/male02.obj', 'assets/models/male02.mtl' );
         },
 
         draw: function(delta_time) {
@@ -49,29 +36,6 @@ function(Class, THREE) {
             this.root.position.z = player.y;
 
             this.root.rotation.y = player.control.ang;
-        },
-
-        fit_to_scale: function(bounds, mesh) {
-            //TODO: should be of the whole root, not only of a mesh.
-
-            if(!mesh.geometry.boundingBox)
-                mesh.geometry.computeBoundingBox();
-
-            var bb = mesh.geometry.boundingBox,
-                max = {'dist': 0, 'axe': null}, dist;
-            for(var axe in bounds) {
-                if(bounds[axe]) {
-                    dist = bb.max[axe] - bb.min[axe];
-                    if(dist > max.dist) {
-                        max.dist = dist;
-                        max.axe = axe;
-                    }
-                }
-            }
-            var scale = bounds[max.axe] / max.dist;
-            mesh.scale.x = scale;
-            mesh.scale.y = scale;
-            mesh.scale.z = scale;
         }
 
     });
