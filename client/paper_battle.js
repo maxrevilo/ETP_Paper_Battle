@@ -8,6 +8,8 @@ requirejs.config({
         'text':             'libs/require_text-2.0.3',
         'jquery':           'libs/jquery-1.8.2',
         'three':            'libs/three',
+        'MTLLoader':        'libs/threejs/loaders/MTLLoader',
+        'OBJMTLLoader':     'libs/threejs/loaders/OBJMTLLoader',
         'class':            'libs/class',
         'utils':            'libs/utils',
         'sockets':          '/socket.io/socket.io.js'
@@ -16,8 +18,13 @@ requirejs.config({
     // Sets the configuration for your third party scripts that are not AMD compatible
     shim: {
         "underscore": {exports: "_"},
-        "three": {exports: "THREE"},
-        "sockets": {exports: "io"}
+        "three": {
+            exports: "THREE"
+        },
+        "sockets": {exports: "io"},
+
+        "MTLLoader": {exports: "THREE"},
+        "OBJMTLLoader": {exports: "THREE"}
 
         /*"backbone": {
             "deps": ["underscore", "jquery"],
