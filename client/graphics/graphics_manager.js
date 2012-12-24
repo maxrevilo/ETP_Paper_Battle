@@ -71,7 +71,7 @@ var GraphicsManager = Class.extend({
         _(this.game.players).each(function(player) {
             if(!player._view) {
                 player._view = new PlayerView(player);
-                this.scene.add(player._view.mesh);
+                this.scene.add(player._view.root);
             }
 
             player._view.draw(delta_time);
