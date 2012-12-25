@@ -1,11 +1,9 @@
-define(['class', 'three', 'MTLLoader', 'OBJMTLLoader'],
+define(['class', 'three'],
 function(Class, THREE) {
-
     var PlayerView = Class.extend({
         component: null,
         root: null,
-        size: 1,
-
+        
         init: function(component) {
             this.component = component;
 
@@ -16,17 +14,17 @@ function(Class, THREE) {
         },
 
         loadContent: function() {
-            var loader = new THREE.OBJMTLLoader(),
-                self = this;
-            loader.addEventListener( 'load', function ( event ) {
-                var model = event.content;
-                self.root.add(model);
-                var scale = 0.01;
-                model.scale.x = scale;
-                model.scale.y = scale;
-                model.scale.z = scale;
-            });
-            loader.load( 'assets/models/male02.obj', 'assets/models/male02.mtl' );
+            var self = this;
+            PB.loader.loadOBJ(
+                'assets/models/cubee/cubee.obj',
+                function(obj3d) {
+                    self.root.add(obj3d);
+                    var scale = 0.6;
+                    obj3d.scale.x = scale;
+                    obj3d.scale.y = scale;
+                    obj3d.scale.z = scale;
+                }
+            );
         },
 
         draw: function(delta_time) {

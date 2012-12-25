@@ -9,6 +9,7 @@ requirejs.config({
         'jquery':           'libs/jquery-1.8.2',
         'three':            'libs/three',
         'MTLLoader':        'libs/threejs/loaders/MTLLoader',
+        'OBJLoader':        'libs/threejs/loaders/OBJLoader',
         'OBJMTLLoader':     'libs/threejs/loaders/OBJMTLLoader',
         'class':            'libs/class',
         'utils':            'libs/utils',
@@ -24,6 +25,7 @@ requirejs.config({
         "sockets": {exports: "io"},
 
         "MTLLoader": {exports: "THREE"},
+        "OBJLoader": {exports: "THREE"},
         "OBJMTLLoader": {exports: "THREE"}
 
         /*"backbone": {
