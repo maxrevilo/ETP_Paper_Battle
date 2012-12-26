@@ -9,6 +9,7 @@ var Player =  DynamicActor.extend({
     max_shoot_cooldown: 0.5,
     shoot_cooldown: 0,
 
+    hit_list: {},
 
     control: null,
     /*  {
@@ -23,6 +24,7 @@ var Player =  DynamicActor.extend({
         this._super(game);
 
         this.life = this.max_life;
+        this.hit_list = {};
 
         this.width = 0.5;
         this.height = 0.5;
@@ -31,7 +33,12 @@ var Player =  DynamicActor.extend({
     },
 
     update: function(delta_time) {
-        var dSec = delta_time / 1000,
+        if(!this.isAlive()) {
+            this.enabled = false;
+            return;
+        }
+
+        var dSec = delta_time * 0.001;
             dir = this.control.dir,
             ang = this.control.ang,
             forward_x = Math.sin(ang),
@@ -75,6 +82,16 @@ var Player =  DynamicActor.extend({
             return true;
         }
         return false;
+    },
+
+    hit: function(bullet, delta_time) {
+        var dmg = bullet.damage * delta_time * 0.001;
+        this.life -= dmg;
+        if(!this.hit_list[bullet.owner.id]) {
+            this.hit_list[bullet.owner.id] = dmg;
+        } else {
+            this.hit_list[bullet.owner.id] += dmg;
+        }
     },
 
     isAlive: function() { return this.life > 0; },

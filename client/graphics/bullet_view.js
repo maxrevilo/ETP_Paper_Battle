@@ -1,7 +1,7 @@
 define(['class', 'three'],
 function(Class, THREE) {
 
-    var BULLET_GEOM = new THREE.CubeGeometry(0.2, 0.2, 0.5),
+    var BULLET_GEOM = new THREE.CubeGeometry(0.2, 0.2, 0.3),
         BULLET_MAT = new THREE.MeshLambertMaterial({ color: 0xff0000, emissive: 0xff0000});
 
     var BulletView = Class.extend({

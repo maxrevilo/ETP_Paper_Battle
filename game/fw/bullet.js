@@ -3,11 +3,16 @@ function(_, Utils, DynamicActor) {
 
 var Bullet =  DynamicActor.extend({
     owner: null,
-    max_life: 2,
+    max_life: 200,
     life: 0,
+
+    damage: 300,
 
     init: function(game) {
         this._super(game);
+
+        this.width = 0.1;
+        this.height = 0.1;
     },
 
     get_state: function(user) {
@@ -32,15 +37,31 @@ var Bullet =  DynamicActor.extend({
     },
 
     update: function(delta_time) {
-        var dSec = delta_time / 1000;
-        this.life -= dSec;
+        if(!this.enabled) return;
 
+        var dSec = delta_time * 0.001;
+            self = this;
+
+        this.life -= 100 * dSec;
+
+        //Checking life:
         if(this.life < 0) {
             this.enabled = false;
-        } else {
-            this.x += this.vx * dSec;
-            this.y += this.vy * dSec;
+            return;
         }
+
+        var player = _(this.game.players).find(function(p){
+            return  p.enabled &&
+                    self.owner.id != p.id &&
+                    Utils.intersect(self, p);
+        });
+        if(player) {
+            this.life -= this.damage * dSec;
+            player.hit(this, delta_time);
+        }
+
+        this.x += this.vx * dSec;
+        this.y += this.vy * dSec;
     },
 
     trigger: function(player) {

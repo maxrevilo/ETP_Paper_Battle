@@ -60,9 +60,23 @@ body {
     border-radius: 6px;
 }
 
-.cooldown {
+.life {
     position: absolute;
     top: 40px;
+    left: 10px;
+    background-color: rgba(0, 73, 0, 0.592157);
+    width: 100px;
+    height: 20px;
+
+    transition: width 0.05s linear;
+    -moz-transition: width 0.05s linear; /* Firefox 4 */
+    -webkit-transition: width 0.05s linear; /* Safari and Chrome */
+    -o-transition: width 0.05s linear; /* Opera */
+}
+
+.cooldown {
+    position: absolute;
+    top: 70px;
     left: 10px;
     background-color: rgba(73, 0, 0, 0.592157);
     width: 100px;

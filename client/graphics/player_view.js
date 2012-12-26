@@ -30,10 +30,17 @@ function(Class, THREE) {
         draw: function(delta_time) {
             var player = this.component;
 
-            this.root.position.x = player.x;
-            this.root.position.z = player.y;
+            if(this.root.visible !== this.component.enabled) {
+                var visible = this.component.enabled;
+                this.root.traverse(function(n){n.visible=visible;});
+            }
 
-            this.root.rotation.y = player.control.ang;
+            if(this.root.visible) {
+                this.root.position.x = player.x;
+                this.root.position.z = player.y;
+
+                this.root.rotation.y = player.control.ang;
+            }
         }
 
     });

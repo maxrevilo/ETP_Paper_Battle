@@ -93,7 +93,8 @@ var GraphicsManager = Class.extend({
         this.renderer.render(this.scene, this.camera);
 
         //GUI:
-        $('.cooldown').width(100 - 100 * Math.max(0, (player.shoot_cooldown/player.max_shoot_cooldown).toFixed(1)) );
+        $('.life').width(100 * Math.max(0, player.life/player.max_life) );
+        $('.cooldown').width(100 - 100 * Math.max(0, player.shoot_cooldown/player.max_shoot_cooldown) );
     },
 
     //Private:

@@ -45,6 +45,15 @@ define(['underscore'], function(_) {
         setIfHas: function(object_dest, object_src, attr) {
             var value = object_src[attr];
             if(value !== undefined && value !== null) object_dest[attr] = value;
+        },
+
+        intersect: function(r1, r2) {
+            return !(
+                r2.x-r2.width*0.5 > r1.x+r1.width*0.5 ||
+                r2.x+r2.width*0.5 < r1.x-r1.width*0.5 ||
+                r2.y-r2.height*0.5 > r1.y+r1.height*0.5 ||
+                r2.y+r2.height*0.5 < r1.y-r1.height*0.5
+            );
         }
 
 
