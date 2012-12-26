@@ -6,7 +6,7 @@ var DUMMY_DRIVER = new Driver();
 var Player =  DynamicActor.extend({
     max_life: 100,
     life: 0,
-    max_shoot_cooldown: 1,
+    max_shoot_cooldown: 0.5,
     shoot_cooldown: 0,
 
 
@@ -23,7 +23,6 @@ var Player =  DynamicActor.extend({
         this._super(game);
 
         this.life = this.max_life;
-        this.shoot_cooldown = this.max_shoot_cooldown;
 
         this.width = 0.5;
         this.height = 0.5;
@@ -43,7 +42,7 @@ var Player =  DynamicActor.extend({
         this.x += 6 * dSec * (dir.y * forward_x + dir.x * right_x);
         this.y += 6 * dSec * (dir.y * forward_y + dir.x * right_y);
 
-        this.shoot_cooldown += dSec;
+        this.shoot_cooldown -= dSec;
     },
 
     get_state: function(user) {
@@ -71,8 +70,8 @@ var Player =  DynamicActor.extend({
     },
 
     shoot: function() {
-        if(this.shoot_cooldown > this.max_shoot_cooldown) {
-            this.shoot_cooldown = 0;
+        if(this.shoot_cooldown <= 0) {
+            this.shoot_cooldown = this.max_shoot_cooldown;
             return true;
         }
         return false;
