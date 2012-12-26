@@ -1,5 +1,5 @@
-define(['underscore', 'class', 'three', 'game/fw/player', './player_view'],
-function(_, Class, THREE, Player, PlayerView) {
+define(['underscore', 'class', 'three', 'game/fw/player', './player_view', './bullet_view'],
+function(_, Class, THREE, Player, PlayerView, BulletView) {
 
 var GraphicsManager = Class.extend({
     //Logic
@@ -25,7 +25,7 @@ var GraphicsManager = Class.extend({
             1000
         );
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
 
         //Ambient
@@ -62,7 +62,7 @@ var GraphicsManager = Class.extend({
     draw: function(delta_time) {
         var player  = this.user.player,
             ang     = player.control.ang,
-            camBase = new THREE.Vector3(-Math.sin(ang), 2, -Math.cos(ang)),
+            camBase = new THREE.Vector3(-Math.sin(ang)*2, 2, -Math.cos(ang)*2),
             camLookOffset = new THREE.Vector3(0, 1.8, 0);
 
         var player_vec3 = new THREE.Vector3(player.x, 0, player.y);
@@ -70,6 +70,7 @@ var GraphicsManager = Class.extend({
         this.camera.position = camBase.addSelf(player_vec3);
         this.camera.lookAt(camLookOffset.addSelf(player_vec3));
 
+        //Players
         _(this.game.players).each(function(player) {
             if(!player._view) {
                 player._view = new PlayerView(player);
@@ -77,6 +78,16 @@ var GraphicsManager = Class.extend({
             }
 
             player._view.draw(delta_time);
+        }, this);
+
+        //Bullets
+        _(this.game.bullets).each(function(bullet) {
+            if(!bullet._view) {
+                bullet._view = new BulletView(bullet);
+                this.scene.add(bullet._view.root);
+            }
+
+            bullet._view.draw(delta_time);
         }, this);
 
         this.renderer.render(this.scene, this.camera);

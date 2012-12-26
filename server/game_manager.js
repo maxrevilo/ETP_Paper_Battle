@@ -12,6 +12,8 @@ var GameManager = Class.extend({
         this.game = game;
         this.channel = channel;
 
+        this._update_clients();
+
         var self = this;
 
         channel.on('connection', function(socket){
@@ -28,24 +30,43 @@ var GameManager = Class.extend({
                 state: game.get_state()
             });
 
+
+            //A player change its move direction
             socket.on('setDir', function(data, callback){
                 socket.get('user' , function(err, user) {
                    var player = user.session.driver.player;
                     if(player) player.set_dir(data.dir);
 
-                    channel.emit('player_state', player.get_state(null));
+                    channel.emit('plSt', player.get_state(null));
                 });
             });
 
+            //Player change its facing angle
             socket.on('setAng', function(data, callback){
                 socket.get('user' , function(err, user) {
                     var player = user.session.driver.player;
                     if(player) player.set_ang(data.ang);
 
-                    channel.volatile.emit(
-                        'player_state',
-                        _(player.get_state(null)).pick('id', 'control')
+                    socket.broadcast.volatile.emit(
+                        'plAng',
+                        player.id+'='+
+                        player.control.ang.toFixed(3)
                     );
+                });
+            });
+
+            //Player want to shoot
+            socket.on('shoot', function(data, callback){
+                socket.get('user' , function(err, user) {
+                    var player = user.session.driver.player;
+                    if(player.shoot()) {
+                        var bullet = game.activate_bullet(player);
+
+                        channel.emit('blSt', bullet.get_state(null));
+                    } else {
+                        //TODO: advice the client
+                    }
+                    
                 });
             });
 
@@ -56,7 +77,21 @@ var GameManager = Class.extend({
                 console.log('Client Disconnected.');
             });
         });
+    },
 
+    /** Periodical update to fix inconsistences **/
+    _update_clients: function() {
+        var self = this;
+        setTimeout(
+            function() {
+                self._update_clients();
+                self.channel.volatile.emit(
+                    'game_state',
+                    self.game.get_state(null)
+                );
+            },
+            1000 //Time betwen updates (ms)
+        );
     }
 });
 

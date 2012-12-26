@@ -4,7 +4,11 @@ function(_, DynamicActor, Utils, Driver) {
 var DUMMY_DRIVER = new Driver();
 
 var Player =  DynamicActor.extend({
-    life: 100,
+    max_life: 100,
+    life: 0,
+    max_shoot_cooldown: 1,
+    shoot_cooldown: 0,
+
 
     control: null,
     /*  {
@@ -18,6 +22,9 @@ var Player =  DynamicActor.extend({
     init: function(game) {
         this._super(game);
 
+        this.life = this.max_life;
+        this.shoot_cooldown = this.max_shoot_cooldown;
+
         this.width = 0.5;
         this.height = 0.5;
 
@@ -25,9 +32,18 @@ var Player =  DynamicActor.extend({
     },
 
     update: function(delta_time) {
-        var dSec = delta_time / 1000;
-        this.x += 6 * dSec * this.control.dir.x;
-        this.y += 6 * dSec * this.control.dir.y;
+        var dSec = delta_time / 1000,
+            dir = this.control.dir,
+            ang = this.control.ang,
+            forward_x = Math.sin(ang),
+            forward_y = Math.cos(ang),
+            right_x   = Math.cos(ang),
+            right_y   = -Math.sin(ang);
+
+        this.x += 6 * dSec * (dir.y * forward_x + dir.x * right_x);
+        this.y += 6 * dSec * (dir.y * forward_y + dir.x * right_y);
+
+        this.shoot_cooldown += dSec;
     },
 
     get_state: function(user) {
@@ -36,7 +52,8 @@ var Player =  DynamicActor.extend({
             {
                 'life': this.life,
                 'control': this.control,
-                'driver': this.driver.get_state(user)
+                'driver': this.driver.get_state(user),
+                'shoot_cooldown': this.shoot_cooldown
             });
     },
 
@@ -45,11 +62,20 @@ var Player =  DynamicActor.extend({
 
         Utils.setIfHas(this, state, 'life');
         Utils.setIfHas(this, state, 'control');
+        Utils.setIfHas(this, state, 'shoot_cooldown');
     },
 
     move: function(ang, dir) {
         this.ang = ang;
         this.control.dir = dir;
+    },
+
+    shoot: function() {
+        if(this.shoot_cooldown > this.max_shoot_cooldown) {
+            this.shoot_cooldown = 0;
+            return true;
+        }
+        return false;
     },
 
     isAlive: function() { return this.life > 0; },

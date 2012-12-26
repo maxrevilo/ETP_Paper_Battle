@@ -19,7 +19,7 @@ function(Class, THREE) {
                 'assets/models/cubee/cubee.obj',
                 function(obj3d) {
                     self.root.add(obj3d);
-                    var scale = 0.6;
+                    var scale = 0.5;
                     obj3d.scale.x = scale;
                     obj3d.scale.y = scale;
                     obj3d.scale.z = scale;

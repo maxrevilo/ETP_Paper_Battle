@@ -16,6 +16,7 @@ function(_, Utils, Class, InputManager) {
 
         dirUpdated: function(){},
         angUpdated: function(){},
+        shooted: function(){},
 
         init: function(game, driver) {
             if(driver===null)
@@ -58,6 +59,13 @@ function(_, Utils, Class, InputManager) {
             //Trigger the event IF:
             if(cont.ang !== prev_cont.ang)
                 this.angUpdated(prev_cont.ang, cont.ang);
+
+            //Actions
+            if(InputManager.mousePressed.l) {
+                if(this.player.shoot()) {
+                    this.shooted();
+                }
+            }
         }
 
     });

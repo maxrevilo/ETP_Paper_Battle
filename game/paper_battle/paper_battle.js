@@ -1,5 +1,9 @@
-define(['game/fw/game', 'utils', './zone_1', './hero', './matus'],
-function(Game, Utils, Zone1, Hero, Matus) {
+define(['game/fw/game', 'utils', './zone_1', './hero', './matus',
+    'game/fw/bullet'],
+function(Game, Utils, Zone1, Hero, Matus, Bullet) {
+
+
+var MAX_PLAYERS = 2;
 
 var PaperBattle = Game.extend({
     heros: {},
@@ -15,8 +19,8 @@ var PaperBattle = Game.extend({
         var zone1 = new Zone1();
         this.add_zone(zone1);
 
-        var matus, hero;
-        _(2).times(function(i) {
+        var matus, hero, bullet;
+        _(MAX_PLAYERS).times(function(i) {
 
             this.add_hero(hero = new Hero(this));
             hero.y = -10;
@@ -28,6 +32,13 @@ var PaperBattle = Game.extend({
 
             this.add_matus(matus = new Matus(this));
             matus.x = i*2 - 20;
+
+        }, this);
+
+        _(10*MAX_PLAYERS).times(function(i) {
+
+            this.add_bullet(bullet = new Bullet(this));
+            bullet.enabled = false;
 
         }, this);
 

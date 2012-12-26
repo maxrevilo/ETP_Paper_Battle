@@ -22,9 +22,11 @@ var Actor =  Component.extend({
 
     set_state: function(state) {
         this._super(state);
+        var dif = 1;
 
-        Utils.setIfHas(this, state, 'x');
-        Utils.setIfHas(this, state, 'y');
+        if(state.x) this.x = this.x * (1-dif) + state.x * dif;
+        if(state.y) this.y = this.y * (1-dif) + state.y * dif;
+
         Utils.setIfHas(this, state, 'width');
         Utils.setIfHas(this, state, 'height');
     },

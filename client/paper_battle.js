@@ -19,14 +19,12 @@ requirejs.config({
     // Sets the configuration for your third party scripts that are not AMD compatible
     shim: {
         "underscore": {exports: "_"},
-        "three": {
-            exports: "THREE"
-        },
+        "three": {exports: "THREE"},
         "sockets": {exports: "io"},
 
-        "MTLLoader": {exports: "THREE"},
-        "OBJLoader": {exports: "THREE"},
-        "OBJMTLLoader": {exports: "THREE"}
+        "MTLLoader": {deps: ["three"], exports: "THREE"},
+        "OBJLoader": {deps: ["three"], exports: "THREE"},
+        "OBJMTLLoader": {deps: ["three"], exports: "THREE"}
 
         /*"backbone": {
             "deps": ["underscore", "jquery"],
@@ -72,6 +70,9 @@ function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User
         PB.user.angUpdated = function(old_ang, new_ang) {
             PB.socket.emit('setAng', {'id': 1, 'ang': new_ang});
         };
+        PB.user.shooted = function() {
+            PB.socket.emit('shoot');
+        };
 
 
         PB.graphics = new GraphicsManager(PB.game, PB.user, $('#screen'));
@@ -80,32 +81,21 @@ function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User
 
     });
 
-    PB.socket.on('player_state', function(player_state) {
+    PB.socket.on('plSt', function(player_state) {
         PB.game.get_player(player_state.id).set_state(player_state);
     });
 
-    /*PB.world = new World();
-    $('#screen').append(PB.world.renderer.domElement);*/
+    PB.socket.on('plAng', function(str) {
+        var parts = str.split("=");
+        PB.game.get_player(Number(parts[0])).control.ang = parts[1];
+    });
 
+    PB.socket.on('blSt', function(bullet_state) {
+        PB.game.get_bullet(bullet_state.id).set_state(bullet_state);
+    });
 
-    /*
-    function update() {
-        PB.world.update(1/60);
-    }
-
-    function render() {
-        update();
-        PB.world.draw(1/60);
-
-        $('.ping .value').html(PB.ping);
-    }
-
-    function game_loop() {
-        requestAnimationFrame(game_loop);
-        render();
-    }
-
-    init();
-    game_loop();*/
+    PB.socket.on('gmSt', function(game_state) {
+        PB.game.set_state(game_state);
+    });
 
 });
