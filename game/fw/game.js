@@ -103,7 +103,7 @@ var Game = Class.extend({
     //USERs
     add_user:function(user) {
         var player = _(this.players).find(function(player){
-            return !_(player.driver).has('player');
+            return player.isAlive() && !_(player.driver).has('player');
         });
         if(player) {
             var driver = new UserDriver(user, player);

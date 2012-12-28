@@ -35,7 +35,7 @@ var GameManager = Class.extend({
             socket.on('setDir', function(data, callback){
                 socket.get('user' , function(err, user) {
                    var player = user.session.driver.player;
-                    if(player) player.set_dir(data.dir);
+                    if(player && player.isAlive()) player.set_dir(data.dir);
 
                     channel.emit('plSt', player.get_state(null));
                 });
@@ -45,7 +45,7 @@ var GameManager = Class.extend({
             socket.on('setAng', function(data, callback){
                 socket.get('user' , function(err, user) {
                     var player = user.session.driver.player;
-                    if(player) player.set_ang(data.ang);
+                    if(player && player.isAlive()) player.set_ang(data.ang);
 
                     socket.broadcast.volatile.emit(
                         'plAng',
@@ -59,14 +59,15 @@ var GameManager = Class.extend({
             socket.on('shoot', function(data, callback){
                 socket.get('user' , function(err, user) {
                     var player = user.session.driver.player;
-                    if(player.shoot()) {
-                        var bullet = game.activate_bullet(player);
+                    if(player && player.isAlive()) {
+                        if(player.shoot()) {
+                            var bullet = game.activate_bullet(player);
 
-                        channel.emit('blSt', bullet.get_state(null));
-                    } else {
-                        //TODO: advice the client
+                            channel.emit('blSt', bullet.get_state(null));
+                        } else {
+                            //TODO: advice the client
+                        }
                     }
-                    
                 });
             });
 

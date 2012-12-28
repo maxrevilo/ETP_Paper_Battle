@@ -77,7 +77,7 @@ var Player =  DynamicActor.extend({
     },
 
     shoot: function() {
-        if(this.shoot_cooldown <= 0) {
+        if(this.isAlive() && this.shoot_cooldown <= 0) {
             this.shoot_cooldown = this.max_shoot_cooldown;
             return true;
         }
@@ -94,7 +94,7 @@ var Player =  DynamicActor.extend({
         }
     },
 
-    isAlive: function() { return this.life > 0; },
+    isAlive: function() { return this.enabled && this.life > 0; },
 
     //Driver:
     reset_driver: function() {

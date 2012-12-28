@@ -6,7 +6,7 @@ var Bullet =  DynamicActor.extend({
     max_life: 200,
     life: 0,
 
-    damage: 300,
+    damage: 500,
 
     init: function(game) {
         this._super(game);
