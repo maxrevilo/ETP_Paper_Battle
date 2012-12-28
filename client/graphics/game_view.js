@@ -39,8 +39,6 @@ function(Class, THREE) {
                     this.root.add(mesh);
                 }
             }*/
-            
-            this.loadContent();
         },
 
         loadContent: function() {

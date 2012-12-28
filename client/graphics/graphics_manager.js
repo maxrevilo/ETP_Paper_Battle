@@ -13,6 +13,9 @@ var GraphicsManager = Class.extend({
     renderer: null,
     camera: null,
 
+    //Views:
+    component_views: null,
+
     init: function(game, user, container) {
         this.game = game;
         this.user = user;
@@ -28,23 +31,30 @@ var GraphicsManager = Class.extend({
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
 
-        var self = this,
-            addView = function(component) {
-                component._view = new this.Class(component);
-                self.scene.add(component._view.root);
-            };
-
         //Game:
-        this.game._view = new GameView(this.game, this.scene);
-        this.scene.add(this.game._view.root);
-
+        this.component_views = [new GameView(this.game, this.scene)];
+        var i,
+            players = this.game.players,
+            bullets = this.game.bullets;
         //Players
-        _(this.game.players).each(addView.bind({Class: PlayerView}), this);
+        i = players.length;
+        while (i--) this.component_views.push(new PlayerView(players[i]));
         //Bullets
-        _(this.game.bullets).each(addView.bind({Class: BulletView}), this);
+        i = bullets.length;
+        while (i--) this.component_views.push(new BulletView(bullets[i]));
 
+        //Adding to the scene:
+        i = this.component_views.length;
+        while (i--) this.scene.add(this.component_views[i].root);
+
+        this.loadContent();
 
         this._draw_cycle(Date.now());
+    },
+
+    loadContent: function() {
+        var i = this.component_views.length;
+        while (i--) this.component_views[i].loadContent();
     },
 
     draw: function(delta_time) {
@@ -58,17 +68,9 @@ var GraphicsManager = Class.extend({
         this.camera.position = camBase.addSelf(player_vec3);
         this.camera.lookAt(camLookOffset.addSelf(player_vec3));
 
-        //Game
-        this.game._view.draw(delta_time);
-        var i;
-        //Players
-        for(i in this.game.players) {
-            this.game.players[i]._view.draw(delta_time);
-        }
-        //Bullets
-        for(i in this.game.bullets) {
-            this.game.bullets[i]._view.draw(delta_time);
-        }
+        //Component Viewss
+        var i = this.component_views.length;
+        while (i--) this.component_views[i].draw(delta_time);
 
         this.renderer.render(this.scene, this.camera);
 

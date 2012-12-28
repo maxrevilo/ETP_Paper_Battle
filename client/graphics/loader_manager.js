@@ -11,45 +11,13 @@ function(EventListener, Utils, THREE) {
 
     var LoaderManager = EventListener.extend({
         events: EVENTS,
-
-        _base_geom: null,
-        _geom_loaded: {},
-        _geom_loader: null,
-
         _obj_loaded: {},
+        _tex_loaded: {},
 
         init: function() {
             this._super();
-            this._geom_loaded = Utils.clone(this._geom_loaded);
-            this._geom_loader = new THREE.BinaryLoader();
-            this._base_geom = new THREE.CubeGeometry(1, 1, 1);
-
             this._obj_loaded = Utils.clone(this._obj_loaded);
-        },
-
-        loadGeom: function(url, callback) {
-            var geom_quest = this._geom_loaded[url];
-            if(!geom_quest) {
-                geom_quest = {geom: null, listeners: []};
-                this._geom_loaded[url] = geom_quest;
-            }
-
-            //TODO must be a way to delete the awaithing callback
-            geom_quest.listeners.push(callback);
-
-            if(geom_quest.geom) {
-                callback(geom_quest.geom);
-            } else {
-                callback(this._base_geom);
-
-                this._geom_loader.load(
-                    url,
-                    function(geom) {
-                        geom_quest.geom = geom;
-                        _(geom_quest.listeners).each(function(fn) { fn(geom); });
-                    }
-                );
-            }
+            this._tex_loaded = Utils.clone(this._tex_loaded);
         },
 
         loadOBJ: function(url, callback) {
@@ -58,20 +26,16 @@ function(EventListener, Utils, THREE) {
                 obj_quest = {obj: null, listeners: []};
                 this._obj_loaded[url] = obj_quest;
 
+                //Loading OBJ
                 var loader = new THREE.OBJLoader();
                 loader.addEventListener('load',
                     function(ev) {
                         obj_quest.obj = ev.content;
-
-                        THREE.ImageUtils.loadTexture('assets/dresses/Snake.png', null, function (tex) {
-                            ev.content.children[0].material.setValues({'map': tex});
-
-                            _(obj_quest.listeners).each(function(fn_cb) {
-                                fn_cb(obj_quest.obj.clone());
-                            });
-                        });
-
                         
+                        //TODO Array.pop instead of each?
+                        _(obj_quest.listeners).each(function(fn_cb) {
+                            fn_cb(obj_quest.obj.clone());
+                        });
                     }
                 );
                 loader.load(url);
@@ -83,6 +47,31 @@ function(EventListener, Utils, THREE) {
                 //TODO must be a way to delete the awaithing callback
                 obj_quest.listeners.push(callback);
             }
+        },
+
+        loadTexture: function(url, callback) {
+            var tex_quest = this._tex_loaded[url];
+            if(!tex_quest) {
+                tex_quest = {tex: null, listeners: []};
+                this._tex_loaded[url] = tex_quest;
+
+                //Loading texture
+                THREE.ImageUtils.loadTexture(url, null, function (tex) {
+                    tex_quest.tex = tex;
+                    //TODO Array.pop instead of each?
+                    _(tex_quest.listeners).each(function(fn_cb) {
+                        fn_cb(tex_quest.tex);
+                    });
+                });
+            }
+            
+            if(tex_quest.tex) {
+                callback(tex_quest.tex);
+            } else {
+                //TODO must be a way to delete the awaithing callback
+                tex_quest.listeners.push(callback);
+            }
+            
         }
     });
 
