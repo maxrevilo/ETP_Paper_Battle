@@ -1,5 +1,5 @@
-define(['underscore', 'class', 'three', 'game/fw/player', './player_view', './bullet_view'],
-function(_, Class, THREE, Player, PlayerView, BulletView) {
+define(['underscore', 'class', 'three', 'game/fw/player', './game_view', './player_view', './bullet_view'],
+function(_, Class, THREE, Player, GameView, PlayerView, BulletView) {
 
 var GraphicsManager = Class.extend({
     //Logic
@@ -28,45 +28,20 @@ var GraphicsManager = Class.extend({
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
 
-        //Ambient
-        var ambient = new THREE.AmbientLight( 0x101030 );
-        this.scene.add( ambient );
+        var self = this,
+            addView = function(component) {
+                component._view = new this.Class(component);
+                self.scene.add(component._view.root);
+            };
 
-        //Point Lights:
-        var pointLight = new THREE.PointLight( 0x9090BB );
-        // set its position
-        pointLight.position.set(100, 1000, 1300);
-        // add to the scene
-        this.scene.add(pointLight);
-        
-        /*
-        //Setting graphics
-        var beg = -20,
-            space = 1.2,
-            mesh_mat = new THREE.MeshPhongMaterial({ color: 0x000055, specular: 0xFFFFFF, shininess: 8 }),
-            geom = new THREE.CylinderGeometry(0.6, 0.6, 0.0, 6, 0, false),
-            mesh, odd;
-        for(var x = 0; x < 40; x++) {
-            for(var y = 0; y < 40; y++) {
-                odd = y % 2;
-                mesh = new THREE.Mesh(geom, mesh_mat);
-                mesh.position = new THREE.Vector3(x*space + beg + odd*space/2, 0, y*space + beg);
-                this.scene.add(mesh);
-            }
-        }*/
+        //Game:
+        this.game._view = new GameView(this.game, this.scene);
+        this.scene.add(this.game._view.root);
 
-        var self = this;
-        PB.loader.loadOBJ(
-            'assets/models/scenes/scene0.obj',
-            function(obj3d) {
-                self.scene.add(obj3d);
-                var scale = 0.5;
-                obj3d.scale.x = scale;
-                obj3d.scale.y = scale;
-                obj3d.scale.z = scale;
-            }
-        );
-
+        //Players
+        _(this.game.players).each(addView.bind({Class: PlayerView}), this);
+        //Bullets
+        _(this.game.bullets).each(addView.bind({Class: BulletView}), this);
 
 
         this._draw_cycle(Date.now());
@@ -83,31 +58,25 @@ var GraphicsManager = Class.extend({
         this.camera.position = camBase.addSelf(player_vec3);
         this.camera.lookAt(camLookOffset.addSelf(player_vec3));
 
+        //Game
+        this.game._view.draw(delta_time);
+        var i;
         //Players
-        _(this.game.players).each(function(player) {
-            if(!player._view) {
-                player._view = new PlayerView(player);
-                this.scene.add(player._view.root);
-            }
-
-            player._view.draw(delta_time);
-        }, this);
-
+        for(i in this.game.players) {
+            this.game.players[i]._view.draw(delta_time);
+        }
         //Bullets
-        _(this.game.bullets).each(function(bullet) {
-            if(!bullet._view) {
-                bullet._view = new BulletView(bullet);
-                this.scene.add(bullet._view.root);
-            }
-
-            bullet._view.draw(delta_time);
-        }, this);
+        for(i in this.game.bullets) {
+            this.game.bullets[i]._view.draw(delta_time);
+        }
 
         this.renderer.render(this.scene, this.camera);
 
         //GUI:
         $('.life').width(100 * Math.max(0, player.life/player.max_life) );
         $('.cooldown').width(100 - 100 * Math.max(0, player.shoot_cooldown/player.max_shoot_cooldown) );
+        $('.pos .x').html(player.x.toFixed(2));
+        $('.pos .y').html(player.y.toFixed(2));
     },
 
     //Private:

@@ -7,8 +7,6 @@ function(Class, THREE) {
         init: function(component) {
             this.component = component;
 
-            var self = this;
-
             this.root = new THREE.Object3D();
             this.loadContent();
         },
