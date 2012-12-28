@@ -33,12 +33,13 @@ var GraphicsManager = Class.extend({
         this.scene.add( ambient );
 
         //Point Lights:
-        var pointLight = new THREE.PointLight(0xFFFFFF);
+        var pointLight = new THREE.PointLight( 0x9090BB );
         // set its position
         pointLight.position.set(100, 1000, 1300);
         // add to the scene
         this.scene.add(pointLight);
         
+        /*
         //Setting graphics
         var beg = -20,
             space = 1.2,
@@ -52,7 +53,19 @@ var GraphicsManager = Class.extend({
                 mesh.position = new THREE.Vector3(x*space + beg + odd*space/2, 0, y*space + beg);
                 this.scene.add(mesh);
             }
-        }
+        }*/
+
+        var self = this;
+        PB.loader.loadOBJ(
+            'assets/models/scenes/scene0.obj',
+            function(obj3d) {
+                self.scene.add(obj3d);
+                var scale = 0.5;
+                obj3d.scale.x = scale;
+                obj3d.scale.y = scale;
+                obj3d.scale.z = scale;
+            }
+        );
 
 
 
