@@ -17,7 +17,6 @@ function(EventListener, Utils, THREE) {
         _geom_loader: null,
 
         _obj_loaded: {},
-        _obj_loader: null,
 
         init: function() {
             this._super();
@@ -26,7 +25,6 @@ function(EventListener, Utils, THREE) {
             this._base_geom = new THREE.CubeGeometry(1, 1, 1);
 
             this._obj_loaded = Utils.clone(this._obj_loaded);
-            this._obj_loader = new THREE.OBJLoader();
         },
 
         loadGeom: function(url, callback) {
@@ -60,12 +58,13 @@ function(EventListener, Utils, THREE) {
                 obj_quest = {obj: null, listeners: []};
                 this._obj_loaded[url] = obj_quest;
 
-                this._obj_loader.addEventListener('load',
+                var loader = new THREE.OBJLoader();
+                loader.addEventListener('load',
                     function(ev) {
                         obj_quest.obj = ev.content;
 
                         THREE.ImageUtils.loadTexture('assets/dresses/Snake.png', null, function (tex) {
-                            ev.content.children[2].material.setValues({'map': tex});
+                            ev.content.children[0].material.setValues({'map': tex});
 
                             _(obj_quest.listeners).each(function(fn_cb) {
                                 fn_cb(obj_quest.obj.clone());
@@ -75,11 +74,11 @@ function(EventListener, Utils, THREE) {
                         
                     }
                 );
-                this._obj_loader.load(url);
+                loader.load(url);
             }
             
             if(obj_quest.obj) {
-                callback(this._clone_obj(obj.clone()));
+                callback(obj_quest.obj.clone());
             } else {
                 //TODO must be a way to delete the awaithing callback
                 obj_quest.listeners.push(callback);
