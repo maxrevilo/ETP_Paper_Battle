@@ -1,12 +1,6 @@
 define(['underscore', 'utils', 'class', './player', './spawn_point', './user_driver'],
 function(_, Utils, Class, Player, SpawnPoint, UserDriver) {
 
-var get_state_arr = function(components) {
-    return _(components)
-        .filter(function(c){ return c.enabled; })
-        .map(function(c){ return c.get_state(); });
-};
-
 var Game = Class.extend({
     time: {
         total: function() { return Date.now() - start; },
@@ -87,7 +81,7 @@ var Game = Class.extend({
         var state = {
             'time'   : this.time,
             //'actors' : get_state_arr(this.actors),
-            'zones'  : get_state_arr(this.zones)
+            'zones'  : _(this.zones).map(function(z){ return z.get_state(user); })
             //'users'  : get_state_arr(this.users)
         };
         return state;

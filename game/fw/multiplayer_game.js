@@ -85,8 +85,8 @@ var MultiplayerGame = Game.extend({
     get_state: function(user) {
         var state = this._super(user);
 
-        state['players'] = _(this.players).map(function(p){ return p.get_state(); });
-        state['bullets'] = _(this.bullets).map(function(b){ return b.get_state(); });
+        state['players'] = _(this.players).map(function(p){ return p.get_state(user); });
+        state['bullets'] = _(this.bullets).map(function(b){ return b.get_state(user); });
 
         return state;
     },

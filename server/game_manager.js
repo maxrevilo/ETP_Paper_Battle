@@ -95,7 +95,7 @@ var GameManager = Class.extend({
             function() {
                 self._update_clients();
                 self.channel.volatile.emit(
-                    'game_state',
+                    'gmSt',
                     self.game.get_state(null)
                 );
             },
