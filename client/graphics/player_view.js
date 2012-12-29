@@ -12,6 +12,10 @@ function(Class, THREE, Hero) {
             this.component = component;
 
             this.root = new THREE.Object3D();
+
+            this.root.castShadow = true;
+            this.root.receiveShadow = true;
+
             if(component instanceof Hero) this.dress_name = 'Snake';
             else this.dress_name = 'Zombie';
         },
@@ -62,8 +66,9 @@ function(Class, THREE, Hero) {
             if(dress) {
                 this.root.traverse(
                     function(o) {
+                        o.castShadow = true;
+                        o.receiveShadow = true;
                         if(_(o).has("material")) {
-                            //o.material.setValues({'map': dress});//{color: 0xff0000});
                             o.material = new THREE.MeshLambertMaterial({'map': dress});
                         }
                     }

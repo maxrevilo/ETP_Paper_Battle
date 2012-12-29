@@ -12,18 +12,6 @@ function(Class, THREE) {
 
             this.root = new THREE.Object3D();
 
-            //Ambient
-            var ambient = new THREE.AmbientLight( 0x101030 );
-            this.scene.add( ambient );
-
-            //Point Lights:
-            var pointLight = new THREE.PointLight( 0x9090BB );
-            // set its position
-            pointLight.position.set(100, 1000, 1300);
-            // add to the scene
-            this.scene.add(pointLight);
-
-
             /*
             //Setting graphics
             var beg = -20,
@@ -51,11 +39,25 @@ function(Class, THREE) {
                     obj3d.scale.x = scale;
                     obj3d.scale.y = scale;
                     obj3d.scale.z = scale;
+
+                    self._update_mesh();
                 }
             );
         },
 
-        draw: function(delta_time) {}
+        draw: function(delta_time) {
+
+        },
+
+        _update_mesh: function() {
+            this.root.traverse(function(o) {
+                o.castShadow = true;
+                o.receiveShadow = true;
+                if(_(o).has("material")) {
+                    o.material = new THREE.MeshLambertMaterial({'color': 0x333333});
+                }
+            });
+        }
     });
 
     return GameView;

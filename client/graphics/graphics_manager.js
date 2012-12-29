@@ -13,6 +13,9 @@ var GraphicsManager = Class.extend({
     renderer: null,
     camera: null,
 
+    main_light: null,
+    main_light_pos: null,
+
     //Views:
     component_views: null,
 
@@ -20,16 +23,66 @@ var GraphicsManager = Class.extend({
         this.game = game;
         this.user = user;
 
+        var NEAR = 0.01, FAR = 32;
+
         this.scene = new THREE.Scene();
+        this.scene.fog = new THREE.Fog(0x505090, 5, FAR);
+
         this.camera = new THREE.PerspectiveCamera(
             75,
             container.innerWidth()/container.innerHeight(),
-            0.1,
-            1000
+            NEAR,
+            FAR*100
         );
 
         this.renderer = new THREE.WebGLRenderer({antialias: true});
         this.renderer.setSize(container.innerWidth(), container.innerHeight());
+        this.renderer.setClearColor( 0x101080, 1 );
+        this.renderer.shadowMapEnabled = true;
+        //this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+        //this.renderer.shadowMapType = THREE.BasicShadowMap;
+        
+        
+        
+
+        /*this.renderer.shadowCameraNear = 0.1;
+        this.renderer.shadowCameraFar = 32;
+        this.renderer.shadowCameraFov = 50;
+        this.renderer.shadowMapSoft = true;
+    
+        this.renderer.shadowMapBias = 0.0039;
+        this.renderer.shadowMapDarkness = 0.01;
+        this.renderer.shadowMapWidth = 1024;
+        this.renderer.shadowMapHeight = 1024;*/
+
+        //Ambient
+        var ambient = new THREE.AmbientLight( 0x101030 );
+        this.scene.add( ambient );
+
+        //Main Light:
+        this.main_light = new THREE.DirectionalLight( 0x9090BB );
+        this.main_light_pos = new THREE.Vector3(15, 30, 30);
+        this.main_light.castShadow = true;
+        this.main_light.shadowDarkness = 0.3;
+
+        this.main_light.shadowCameraNear = 20;
+        this.main_light.shadowCameraFar = 100;
+
+        this.main_light.shadowCameraLeft = -30;
+        this.main_light.shadowCameraRight = 30;
+        this.main_light.shadowCameraTop = 30;
+        this.main_light.shadowCameraBottom = -15;
+        
+        this.main_light.shadowMapWidth = 2*1024;
+        this.main_light.shadowMapHeight = 2*1024;
+        this.main_light.shadowBias = 0.0015;
+
+        //this.main_light.shadowCameraVisible = true;
+
+        // add to the scene
+        this.scene.add(this.main_light);
+        
+
 
         //Game:
         this.component_views = [new GameView(this.game, this.scene)];
@@ -67,6 +120,10 @@ var GraphicsManager = Class.extend({
 
         this.camera.position = camBase.addSelf(player_vec3);
         this.camera.lookAt(camLookOffset.addSelf(player_vec3));
+
+        //Main ligth:
+        this.main_light.position.add(this.main_light_pos, player_vec3);
+        this.main_light.target.position.set(player.x, 0, player.y);
 
         //Component Viewss
         var i = this.component_views.length;
