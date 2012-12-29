@@ -1,11 +1,11 @@
-define(['game/fw/game', 'utils', './zone_1', './hero', './matus',
+define(['game/fw/multiplayer_game', 'utils', './zone_1', './hero', './matus',
     'game/fw/bullet'],
-function(Game, Utils, Zone1, Hero, Matus, Bullet) {
+function(MultiplayerGame, Utils, Zone1, Hero, Matus, Bullet) {
 
 
 var MAX_PLAYERS = 2;
 
-var PaperBattle = Game.extend({
+var PaperBattle = MultiplayerGame.extend({
     heros: {},
     matus: {},
 
@@ -23,15 +23,14 @@ var PaperBattle = Game.extend({
         _(MAX_PLAYERS).times(function(i) {
 
             this.add_hero(hero = new Hero(this));
-            hero.y = -10;
-            hero.x = i*2 - 20;
+            hero.enabled = false;
 
         }, this);
 
         _(10).times(function(i) {
 
             this.add_matus(matus = new Matus(this));
-            matus.x = i*2 - 20;
+            matus.enabled = false;
 
         }, this);
 
@@ -43,6 +42,13 @@ var PaperBattle = Game.extend({
         }, this);
 
         this.start();
+    },
+
+    //PLAYERs:
+    get_free_player: function() {
+        return _(this.heros).find(function(hero){
+            return !hero.enabled && !_(hero.driver).has('user');
+        });
     },
 
     //HEROs

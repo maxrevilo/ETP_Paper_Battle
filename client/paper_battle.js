@@ -81,6 +81,10 @@ function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User
 
     });
 
+    PB.socket.on('kick', function(data) {
+        alert("You have been kicked from the server\nMessage: "+data.message);
+    });
+
     PB.socket.on('plSt', function(player_state) {
         PB.game.get_player(player_state.id).set_state(player_state);
     });

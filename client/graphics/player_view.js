@@ -5,6 +5,8 @@ function(Class, THREE, Hero) {
         root: null,
         dress: null,
         dress_name: null,
+
+        _visible: true,
         
         init: function(component) {
             this.component = component;
@@ -32,6 +34,8 @@ function(Class, THREE, Hero) {
                             obj3d.scale.z = scale;
 
                             self._update_dress();
+                            //Updating childs visibility:
+                            self.setVisibility(undefined);
                         }
                     );
                 }
@@ -41,12 +45,11 @@ function(Class, THREE, Hero) {
         draw: function(delta_time) {
             var player = this.component;
 
-            if(this.root.visible !== this.component.enabled) {
-                var visible = this.component.enabled;
-                this.root.traverse(function(n){n.visible=visible;});
+            if(this._visible !== this.component.enabled) {
+                this.setVisibility(this.component.enabled);
             }
 
-            if(this.root.visible) {
+            if(this._visible) {
                 this.root.position.x = player.x;
                 this.root.position.z = player.y;
 
@@ -66,6 +69,12 @@ function(Class, THREE, Hero) {
                     }
                 );
             }
+        },
+
+        setVisibility: function(toggle) {
+            if(toggle !== undefined) this._visible = toggle;
+            var self = this;
+            this.root.traverse(function(n){n.visible=self._visible;});
         }
 
     });

@@ -16,12 +16,12 @@ var Bullet =  DynamicActor.extend({
     },
 
     get_state: function(user) {
-        return _.extend(
-            this._super(user),
-            {
-                'owner_id': this.owner.id,
-                'life': this.life
-            });
+        var state = this._super(user);
+        if(this.enabled) {
+            state['owner_id'] = this.owner.id;
+            state['life'] = this.life;
+        }
+        return state;
     },
 
     set_state: function(state) {

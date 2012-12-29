@@ -1,5 +1,5 @@
-define(['underscore', 'utils', 'class', './player', './user_driver'],
-function(_, Utils, Class, Player, UserDriver) {
+define(['underscore', 'utils', 'class', './player', './spawn_point', './user_driver'],
+function(_, Utils, Class, Player, SpawnPoint, UserDriver) {
 
 var get_state_arr = function(components) {
     return _(components)
@@ -20,8 +20,6 @@ var Game = Class.extend({
     //Components
     zones : [],
     actors: [],
-    players: [],
-    bullets: [],
 
     //Persistibles:
     users : [],
@@ -34,11 +32,9 @@ var Game = Class.extend({
         this.updates_per_second = updates_per_second;
 
         this.time    = Utils.clone(this.time);
-        this.zones   = Utils.clone(this.zones);
-        this.players = Utils.clone(this.players);
-        this.bullets = Utils.clone(this.bullets);
-        this.actors  = Utils.clone(this.actors);
-        this.users   = Utils.clone(this.users);
+        this.zones   = [];
+        this.actors  = [];
+        this.users   = [];
     },
 
     start: function() {
@@ -71,54 +67,16 @@ var Game = Class.extend({
         return _(this.actors).find(function(a){ return a.id === id; });
     },
 
-    //PLAYERs
-    add_player: function(player) {
-        this.add_actor(player);
-        return this.players.push(player);
-    },
-
-    get_player: function(id) {
-        return _(this.players).find(function(p){ return p.id === id; });
-    },
-
-    //BULLETSs
-    add_bullet: function(bullet) {
-        this.add_actor(bullet);
-        return this.bullets.push(bullet);
-    },
-
-    get_bullet: function(id) {
-        return _(this.bullets).find(function(b){ return b.id === id; });
-    },
-
-    activate_bullet: function(player) {
-        var bullet = _(this.bullets).find(function(bullet){
-            return !bullet.enabled;
-        });
-        if(!bullet) throw new Error("Not enough bullets instances");
-        bullet.trigger(player);
-        return bullet;
-    },
-
     //USERs
     add_user:function(user) {
-        var player = _(this.players).find(function(player){
-            return player.isAlive() && !_(player.driver).has('player');
-        });
-        if(player) {
-            var driver = new UserDriver(user, player);
-            this.users.push(user);
-            return user;
-        } else {
-            return null;
-        }
+        this.users.push(user);
+        return user;
     },
 
     rem_user:function(user) {
         var ind = this.users.indexOf(user);
         if(ind >= 0) {
             this.users.splice(ind, 1);
-            user.session.driver.destroy();
             return true;
         }
         return false;
@@ -128,11 +86,9 @@ var Game = Class.extend({
     get_state: function(user) {
         var state = {
             'time'   : this.time,
-            'players': get_state_arr(this.players),
-            'bullets': get_state_arr(this.bullets),
             //'actors' : get_state_arr(this.actors),
-            'zones'  : get_state_arr(this.zones),
-            'users'  : get_state_arr(this.users)
+            'zones'  : get_state_arr(this.zones)
+            //'users'  : get_state_arr(this.users)
         };
         return state;
     },
@@ -140,30 +96,6 @@ var Game = Class.extend({
     set_state: function(state) {
         //Time
         Utils.setIfHas(this, state, 'time');
-
-        //Actors: ???
-
-        //Players
-        if(_(state).has('players')) {
-            _(state.players).each(function(p) {
-                var player = this.get_player(p.id);
-                if(!player) throw new Error("Player not found");
-                player.set_state(p);
-            }, this);
-        }
-
-        //Bullets
-        if(_(state).has('bullets')) {
-            _(state.bullets).each(function(b) {
-                var bullet = this.get_bullet(b.id);
-                if(!bullet) throw new Error("Bullet not found");
-                bullet.set_state(b);
-            }, this);
-        }
-
-        //Zones: ???
-
-        //Users: ???
     },
 
     //Privates:

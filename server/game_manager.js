@@ -22,7 +22,15 @@ var GameManager = Class.extend({
             
             var user = new User();
             socket.set('user', user, function(){});
-            self.game.add_user(user);
+            var added = self.game.add_user(user);
+
+            if(!added) {
+                var message = 'User rejected: player slots depleted';
+                console.log(message);
+                socket.emit('kick', {'message': message});
+                socket.disconnect();
+                return false;
+            }
 
             console.log('User asigned to '+user.session.driver.player);
             socket.emit('init_data', {
