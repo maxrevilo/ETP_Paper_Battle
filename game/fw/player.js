@@ -23,9 +23,6 @@ var Player =  DynamicActor.extend({
     init: function(game) {
         this._super(game);
 
-        this.life = this.max_life;
-        this.hit_list = {};
-
         this.width = 0.5;
         this.height = 0.5;
 
@@ -95,6 +92,19 @@ var Player =  DynamicActor.extend({
     },
 
     isAlive: function() { return this.enabled && this.life > 0; },
+
+    initialize: function(pos_v2) {
+        this.x = pos_v2.x;
+        this.y = pos_v2.y;
+        this.life = this.max_life;
+        this.hit_list = {};
+        this.enabled = true;
+    },
+
+    kill: function() {
+        this.life = 0;
+        this.enabled = false;
+    },
 
     //Driver:
     reset_driver: function() {

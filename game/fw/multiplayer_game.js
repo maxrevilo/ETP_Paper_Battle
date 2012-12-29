@@ -64,7 +64,7 @@ var MultiplayerGame = Game.extend({
         var player = this.get_free_player();
         if(player) {
             var driver = new UserDriver(user, player);
-            player.enabled = true;
+            player.initialize({x:0, y:0});
             return this._super(user);
         } else {
             return null;
@@ -73,7 +73,10 @@ var MultiplayerGame = Game.extend({
 
     rem_user:function(user) {
         var rem = this._super(user);
-        if(rem) user.session.driver.destroy();
+        if(rem) {
+            user.session.driver.player.kill();
+            user.session.driver.destroy();
+        }
         return rem;
     },
 

@@ -3,7 +3,7 @@ define(['game/fw/multiplayer_game', 'utils', './zone_1', './hero', './matus',
 function(MultiplayerGame, Utils, Zone1, Hero, Matus, Bullet) {
 
 
-var MAX_PLAYERS = 2;
+var MAX_PLAYERS = 4;
 
 var PaperBattle = MultiplayerGame.extend({
     heros: {},
@@ -12,8 +12,8 @@ var PaperBattle = MultiplayerGame.extend({
     init: function(game) {
         this._super(game);
 
-        this.heros   = Utils.clone(this.heros);
-        this.matus   = Utils.clone(this.matus);
+        this.heros   = {};
+        this.matus   = {};
 
         //Level specifics:
         var zone1 = new Zone1();
@@ -27,7 +27,7 @@ var PaperBattle = MultiplayerGame.extend({
 
         }, this);
 
-        _(10).times(function(i) {
+        _(10*MAX_PLAYERS).times(function(i) {
 
             this.add_matus(matus = new Matus(this));
             matus.enabled = false;
