@@ -39,7 +39,6 @@ var MultiplayerGame = Game.extend({
         });
     },
 
-
     //BULLETSs
     add_bullet: function(bullet) {
         this.add_actor(bullet);
@@ -59,12 +58,20 @@ var MultiplayerGame = Game.extend({
         return bullet;
     },
 
+    //SPAWN_POINTs
+    add_spawn_point: function(spawn_point) {
+        this.add_actor(spawn_point);
+        return this.spawn_points.push(spawn_point);
+    },
+
     //USERs
     add_user:function(user) {
         var player = this.get_free_player();
         if(player) {
             var driver = new UserDriver(user, player);
-            player.initialize({x:0, y:0});
+            player.initialize(this.spawn_points[
+                Math.floor(Math.random() * this.spawn_points.length)
+            ]);
             return this._super(user);
         } else {
             return null;

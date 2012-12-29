@@ -93,9 +93,9 @@ var Player =  DynamicActor.extend({
 
     isAlive: function() { return this.enabled && this.life > 0; },
 
-    initialize: function(pos_v2) {
-        this.x = pos_v2.x;
-        this.y = pos_v2.y;
+    initialize: function(spawn_point) {
+        this.x = spawn_point.x;
+        this.y = spawn_point.y;
         this.life = this.max_life;
         this.hit_list = {};
         this.enabled = true;
