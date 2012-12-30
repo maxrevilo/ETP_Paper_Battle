@@ -3,19 +3,16 @@ function(_, Driver, Utils) {
 
 var UserDriver = Driver.extend({
     user: null,
-    player: null,
 
 
-    init: function(user, player) {
+    init: function(game, user, player) {
+        this._super(game, player);
         this.user = user;
-        this.player = player;
-
-        player.driver = this;
         user.session.driver = this;
     },
 
     destroy: function() {
-        this.player.reset_driver();
+        this._super();
         this.user.session.driver = null;
     },
 
@@ -23,8 +20,7 @@ var UserDriver = Driver.extend({
         var s_state = _.extend(
             this._super(user),
             {
-                'username': this.user.profile.username,
-                'player_id': this.player.id
+                'username': this.user.profile.username
             });
 
         s_state['type'] = 'user';

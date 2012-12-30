@@ -110,7 +110,7 @@ requirejs.config({
 //Start point
 requirejs(['game/paper_battle/paper_battle', './game_manager'],
 function(PaperBattle, GameManager) {
-    var updates_per_second = process.env.UPS || 30;
+    var updates_per_second = process.env.UPS || 60;
 
     S_GAME_M = new GameManager(
         new PaperBattle(updates_per_second),

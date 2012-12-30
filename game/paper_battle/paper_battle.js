@@ -1,6 +1,6 @@
 define(['game/fw/multiplayer_game', 'utils', './zone_1', './hero', './matus',
-    'game/fw/bullet', './hero_spawnpt'],
-function(MultiplayerGame, Utils, Zone1, Hero, Matus, Bullet, HeroSpawnPT) {
+    'game/fw/bullet', './hero_spawnpt', './matus_trap'],
+function(MultiplayerGame, Utils, Zone1, Hero, Matus, Bullet, HeroSpawnPT, MatusTrap) {
 
 
 var MAX_PLAYERS = 4;
@@ -9,11 +9,14 @@ var PaperBattle = MultiplayerGame.extend({
     heros: {},
     matus: {},
 
+    matus_traps: [],
+
     init: function(game) {
         this._super(game);
 
         this.heros   = {};
         this.matus   = {};
+        this.matus_traps = [];
 
         //Level specifics:
         var zone1 = new Zone1();
@@ -53,7 +56,12 @@ var PaperBattle = MultiplayerGame.extend({
             new HeroSpawnPT(this, {x:-80, y:-36})
         );
 
-
+        //MATUS_TRAPs:
+        this.matus_traps[0] = new MatusTrap(this, 8);
+        this.matus_traps[0].set_area(0.1, -19, 6.8, 15);
+        this.matus_traps[0].add_spawn_pt(2.3, -8.5, 5, 5);
+        this.matus_traps[0].add_spawn_pt(-19.3, -14, 5, 5);
+        this.add_actor(this.matus_traps[0]);
 
         this.start();
     },

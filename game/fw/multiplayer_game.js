@@ -1,5 +1,5 @@
-define(['underscore', 'utils', './game', './player', './spawn_point', './user_driver'],
-function(_, Utils, Game, Player, SpawnPoint, UserDriver) {
+define(['underscore', 'utils', './game', './user_driver'],
+function(_, Utils, Game, UserDriver) {
 
 var MultiplayerGame = Game.extend({
 
@@ -68,7 +68,7 @@ var MultiplayerGame = Game.extend({
     add_user:function(user) {
         var player = this.get_free_player();
         if(player) {
-            var driver = new UserDriver(user, player);
+            var driver = new UserDriver(this, user, player);
             player.initialize(this.spawn_points[
                 Math.floor(Math.random() * this.spawn_points.length)
             ]);

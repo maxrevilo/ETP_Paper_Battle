@@ -52,11 +52,10 @@ var Bullet =  DynamicActor.extend({
 
         var player = _(this.game.players).find(function(p){
             return  p.enabled &&
-                    self.owner.id != p.id &&
-                    Utils.intersect(self, p);
+                    self.owner.id != p.id && self.intersects(p);
         });
         if(player) {
-            this.life -= this.damage * dSec;
+            this.life -= 5 * this.damage * dSec;
             player.hit(this, delta_time);
         }
 

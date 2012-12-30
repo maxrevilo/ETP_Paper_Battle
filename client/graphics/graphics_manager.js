@@ -41,19 +41,6 @@ var GraphicsManager = Class.extend({
         this.renderer.shadowMapEnabled = true;
         //this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
         //this.renderer.shadowMapType = THREE.BasicShadowMap;
-        
-        
-        
-
-        /*this.renderer.shadowCameraNear = 0.1;
-        this.renderer.shadowCameraFar = 32;
-        this.renderer.shadowCameraFov = 50;
-        this.renderer.shadowMapSoft = true;
-    
-        this.renderer.shadowMapBias = 0.0039;
-        this.renderer.shadowMapDarkness = 0.01;
-        this.renderer.shadowMapWidth = 1024;
-        this.renderer.shadowMapHeight = 1024;*/
 
         //Ambient
         var ambient = new THREE.AmbientLight( 0x101030 );
@@ -76,7 +63,6 @@ var GraphicsManager = Class.extend({
         this.main_light.shadowMapWidth = 2*1024;
         this.main_light.shadowMapHeight = 2*1024;
         this.main_light.shadowBias = 0.0015;
-
         //this.main_light.shadowCameraVisible = true;
 
         // add to the scene

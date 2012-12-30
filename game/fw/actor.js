@@ -9,6 +9,17 @@ var Actor =  Component.extend({
         this._super(game);
     },
 
+    intersects: function(actor) {
+        return Utils.intersect(this, actor);
+    },
+
+    set_area: function(x, y, width, height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    },
+
     get_state: function(user) {
         return _.extend(
             this._super(user),

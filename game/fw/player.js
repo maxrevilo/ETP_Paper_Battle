@@ -1,13 +1,12 @@
 define(['underscore', './dynamic_actor', 'utils', './driver'],
 function(_, DynamicActor, Utils, Driver) {
 
-var DUMMY_DRIVER = new Driver();
-
 var Player =  DynamicActor.extend({
     max_life: 100,
     life: 0,
     max_shoot_cooldown: 0.5,
     shoot_cooldown: 0,
+    speed: 6,
 
     hit_list: {},
 
@@ -18,14 +17,21 @@ var Player =  DynamicActor.extend({
     *   },
     */
 
-    driver: DUMMY_DRIVER,
+    driver: null,
+
+    // 0 is free for all
+    team: 0,
+
+    //Private:
+    _DUMMY_DRIVER: null,
 
     init: function(game) {
         this._super(game);
 
-        this.width = 0.5;
-        this.height = 0.5;
+        this.width = 1;
+        this.height = 1;
 
+        this.reset_driver();
         this.reset_control();
     },
 
@@ -35,6 +41,8 @@ var Player =  DynamicActor.extend({
             return;
         }
 
+        if(this.driver) this.driver.update(delta_time);
+
         var dSec = delta_time * 0.001;
             dir = this.control.dir,
             ang = this.control.ang,
@@ -43,8 +51,20 @@ var Player =  DynamicActor.extend({
             right_x   = Math.cos(ang),
             right_y   = -Math.sin(ang);
 
-        this.x += 6 * dSec * (dir.y * forward_x + dir.x * right_x);
-        this.y += 6 * dSec * (dir.y * forward_y + dir.x * right_y);
+        this.x += this.speed * dSec * (dir.y * forward_x + dir.x * right_x);
+        this.y += this.speed * dSec * (dir.y * forward_y + dir.x * right_y);
+
+        var players = this.game.players,
+            i = players.length,
+            esc_ang,
+            esc_str = 0.07;
+        while(i--) {
+            if(players[i].id != this.id && this.intersects(players[i])) {
+                esc_ang = Math.atan2(this.y - players[i].y, this.x - players[i].x);
+                this.x += esc_str * Math.cos(esc_ang);
+                this.y += esc_str * Math.sin(esc_ang);
+            }
+        }
 
         this.shoot_cooldown -= dSec;
     },
@@ -94,8 +114,8 @@ var Player =  DynamicActor.extend({
     isAlive: function() { return this.enabled && this.life > 0; },
 
     initialize: function(spawn_point) {
-        this.x = spawn_point.x;
-        this.y = spawn_point.y;
+        this.x = spawn_point.x + spawn_point.width * (Math.random() - 0.5);
+        this.y = spawn_point.y + spawn_point.height * (Math.random() - 0.5);
         this.life = this.max_life;
         this.hit_list = {};
         this.enabled = true;
@@ -108,7 +128,9 @@ var Player =  DynamicActor.extend({
 
     //Driver:
     reset_driver: function() {
-        this.driver = DUMMY_DRIVER;
+        if(!this._DUMMY_DRIVER)
+            this._DUMMY_DRIVER = new Driver(this.game, this);
+        this.driver = this._DUMMY_DRIVER;
     },
 
     //Controls:

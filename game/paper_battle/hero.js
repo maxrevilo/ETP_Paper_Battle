@@ -5,6 +5,8 @@ var Hero = Player.extend({
 
     init: function(game) {
         this._super(game);
+
+        this.team = 1;
     },
 
     get_state: function(user) {

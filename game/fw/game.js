@@ -1,5 +1,5 @@
-define(['underscore', 'utils', 'class', './player', './spawn_point', './user_driver'],
-function(_, Utils, Class, Player, SpawnPoint, UserDriver) {
+define(['underscore', 'utils', 'class'],
+function(_, Utils, Class) {
 
 var Game = Class.extend({
     time: {
