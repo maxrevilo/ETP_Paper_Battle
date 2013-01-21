@@ -24,7 +24,10 @@ var MatusTrap = Actor.extend({
 
         _(this.game.heros).each(function(hero) {
 
-            if(this.heros_trapped.indexOf(hero.id) === -1 && this.intersects(hero)) {
+            if(hero.isAlive() &&
+                    this.heros_trapped.indexOf(hero.id) === -1 &&
+                    this.intersects(hero)) {
+                
                 this._maddness();
 
                 this.heros_trapped.push(hero.id);
