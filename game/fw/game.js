@@ -18,12 +18,15 @@ var Game = Class.extend({
     //Persistibles:
     users : [],
 
+    isServer: false,
+
     //Events functions:
     beforeUpdate: function(){},
 
-    init: function(updates_per_second) {
+    init: function(updates_per_second, isServer) {
         this.time.started = Date.now();
         this.updates_per_second = updates_per_second;
+        this.isServer = isServer;
 
         this.time    = Utils.clone(this.time);
         this.zones   = [];

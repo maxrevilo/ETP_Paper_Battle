@@ -1,7 +1,7 @@
 define(['underscore', './driver', 'utils'],
 function(_, Driver, Utils) {
 
-var BasicIADriver = Driver.extend({
+var BasicAIDriver = Driver.extend({
     init: function(game, player) {
         this._super(game, player);
     },
@@ -32,6 +32,11 @@ var BasicIADriver = Driver.extend({
                 Math.atan2(nearest.p.x-this.player.x, nearest.p.y-this.player.y);
 
             control.dir.y = 1;
+
+            if(this.on_range(nearest.p)) {
+                this.player.shoot();
+            }
+
         } else {
             control.dir.y = 0;
         }
@@ -42,17 +47,21 @@ var BasicIADriver = Driver.extend({
                 player.team != this.player.team;
     },
 
+    on_range: function(player) {
+        return true;
+    },
+
     get_state: function(user) {
         var s_state = _.extend(
             this._super(user),
             {
             });
 
-        s_state['type'] = 'basic_ia';
+        s_state['type'] = 'basic_ai';
         return s_state;
     }
 });
 
-return BasicIADriver;
+return BasicAIDriver;
 
 });

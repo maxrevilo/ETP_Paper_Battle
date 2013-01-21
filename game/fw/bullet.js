@@ -51,7 +51,7 @@ var Bullet =  DynamicActor.extend({
         }
 
         var player = _(this.game.players).find(function(p){
-            return  p.enabled &&
+            return  p.enabled && self.owner.team != p.team &&
                     self.owner.id != p.id && self.intersects(p);
         });
         if(player) {

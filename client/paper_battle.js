@@ -52,7 +52,7 @@ function(require, $, io, THREE, InputManager, PaperBattle, GraphicsManager, User
 
     PB.loader = new LoaderManager();
 
-    PB.game = new PaperBattle(60);
+    PB.game = new PaperBattle(60, false);
 
     PB.socket.on('init_data', function (data) {
         var state = data.state,

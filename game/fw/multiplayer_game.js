@@ -11,8 +11,8 @@ var MultiplayerGame = Game.extend({
     //Events functions:
     beforeUpdate: function(){},
 
-    init: function(updates_per_second) {
-        this._super(updates_per_second);
+    init: function(updates_per_second, isServer) {
+        this._super(updates_per_second, isServer);
 
         this.players = [];
         this.bullets = [];

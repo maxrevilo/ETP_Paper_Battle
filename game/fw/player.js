@@ -22,6 +22,8 @@ var Player =  DynamicActor.extend({
     // 0 is free for all
     team: 0,
 
+    shoot_handlers: null, //[]
+
     //Private:
     _DUMMY_DRIVER: null,
 
@@ -30,6 +32,8 @@ var Player =  DynamicActor.extend({
 
         this.width = 1;
         this.height = 1;
+
+        this.shoot_handlers = [];
 
         this.reset_driver();
         this.reset_control();
@@ -59,7 +63,7 @@ var Player =  DynamicActor.extend({
             esc_ang,
             esc_str = 0.07;
         while(i--) {
-            if(players[i].id != this.id && this.intersects(players[i])) {
+            if(players[i].isAlive() && players[i].id != this.id && this.intersects(players[i])) {
                 esc_ang = Math.atan2(this.y - players[i].y, this.x - players[i].x);
                 this.x += esc_str * Math.cos(esc_ang);
                 this.y += esc_str * Math.sin(esc_ang);
@@ -93,9 +97,14 @@ var Player =  DynamicActor.extend({
         this.control.dir = dir;
     },
 
+    //TODO Rename atack.
     shoot: function() {
         if(this.isAlive() && this.shoot_cooldown <= 0) {
             this.shoot_cooldown = this.max_shoot_cooldown;
+
+            var i = this.shoot_handlers.length;
+            while(i--) this.shoot_handlers[i](this);
+
             return true;
         }
         return false;

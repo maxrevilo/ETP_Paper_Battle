@@ -11,8 +11,8 @@ var PaperBattle = MultiplayerGame.extend({
 
     matus_traps: [],
 
-    init: function(game) {
-        this._super(game);
+    init: function(game, isServer) {
+        this._super(game, isServer);
 
         this.heros   = {};
         this.matus   = {};
@@ -47,21 +47,23 @@ var PaperBattle = MultiplayerGame.extend({
 
         }, this);
 
-        //SPAWN_PTs
-        this.add_spawn_point(
-            new HeroSpawnPT(this, {x:0, y:0})
-        );
+        if(this.isServer) {
+            //SPAWN_PTs
+            this.add_spawn_point(
+                new HeroSpawnPT(this, {x:0, y:0})
+            );
 
-        this.add_spawn_point(
-            new HeroSpawnPT(this, {x:-80, y:-36})
-        );
+            this.add_spawn_point(
+                new HeroSpawnPT(this, {x:-80, y:-36})
+            );
 
-        //MATUS_TRAPs:
-        this.matus_traps[0] = new MatusTrap(this, 8);
-        this.matus_traps[0].set_area(0.1, -19, 6.8, 15);
-        this.matus_traps[0].add_spawn_pt(2.3, -8.5, 5, 5);
-        this.matus_traps[0].add_spawn_pt(-19.3, -14, 5, 5);
-        this.add_actor(this.matus_traps[0]);
+            //MATUS_TRAPs:
+            this.matus_traps[0] = new MatusTrap(this, 4, 20);
+            this.matus_traps[0].set_area(0.1, -19, 6.8, 15);
+            this.matus_traps[0].add_spawn_pt(2.3, -8.5, 5, 5);
+            this.matus_traps[0].add_spawn_pt(-19.3, -14, 5, 5);
+            this.add_actor(this.matus_traps[0]);
+        }
 
         this.start();
     },
@@ -84,7 +86,15 @@ var PaperBattle = MultiplayerGame.extend({
     //MATUSs
     add_matus: function(matus) {
         this.add_player(matus);
+
+        matus.shoot_handlers.push(this.matus_shoot);
+
         return this.matus[matus.id] = matus;
+    },
+
+    matus_shoot: function(matus) {
+        game = matus.game;
+        game.activate_bullet(matus);
     },
 
     get_matus: function(id) { return this.matus[id]; },
